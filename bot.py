@@ -4,14 +4,14 @@ from pyzabbix import ZabbixAPI
 from suds.client import Client
 
 
-
-
 bot = telebot.TeleBot(config.token)
-white_list = [-354415687]
+white_list = config.white_list
+
 
 @bot.message_handler(func=lambda message: message.chat.id not in white_list)
 def access_denied(message):
     bot.send_message(message.chat.id, 'Доступ закрыт')
+
 
 @bot.message_handler(content_types=['text'])
 def get_message(message):
