@@ -15,10 +15,8 @@ def access_denied(message):
 
 @bot.message_handler(content_types=['text'])
 def get_message(message):
-    print(message)
-    if '100' in message.text:
+    if message.text.startswith('100'):
         login_id = message.text
-        print(login_id)
         endpoint = config.wsdl_url
         service_url = config.service_url
         client = Client(endpoint, faults=False)
@@ -32,13 +30,17 @@ def get_message(message):
             devicename = device[1][0]['device']['devicename']
             zb = ZabbixAPI('http://zabbix.opti', user=config.zabbix_login, password=config.zabbix_password)
             items = zb.item.get(host=devicename, output=['itemid', 'name', 'lastvalue'])
+            signal_level = 'Не найдено'
             for item in items:
                 if str(login_id) in item['name']:
-
                     if 'Signal level' in item['name']:
+                        print(item)
                         signal_level = item['lastvalue']
                         signal_level = round(float(signal_level), 1)
-                        answer = signal_level
+                    answer = f'''
+Логин: {login_id} 
+Уровень сигнала: {signal_level}
+'''
         else:
             answer = "Пользователь не найден"
         bot.send_message(message.chat.id, answer)
