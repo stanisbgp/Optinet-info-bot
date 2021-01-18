@@ -31,7 +31,7 @@ def get_message(message):
                 devicename = device[1][0]['device']['devicename']
                 zb = ZabbixAPI('http://zabbix.opti', user=config.zabbix_login, password=config.zabbix_password)
                 items = zb.item.get(host=devicename, output=['itemid', 'name', 'lastvalue'])
-                signal_level = 'Не найдено'
+                signal_level = 'Данные отсутствуют'
                 for item in items:
                     if str(login_id) in item['name']:
                         if 'Signal level' in item['name']:
