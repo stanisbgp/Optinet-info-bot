@@ -15,6 +15,7 @@ def access_denied(message):
 
 @bot.message_handler(content_types=['text'])
 def get_message(message):
+    answer = "Данные отсутствуют"
     if message.text.startswith('100'):
         login_id = message.text
         endpoint = config.wsdl_url
