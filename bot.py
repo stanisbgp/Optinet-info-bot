@@ -57,7 +57,8 @@ def get_message(message):
         user_info(message)
     elif "ON" in message.text:
         user_info(message)
-
+    elif message.text.startswith('GON'):
+        user_info(message)
 
 if __name__ == '__main__':
     bot.infinity_polling()
