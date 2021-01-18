@@ -1,3 +1,5 @@
+#!/usr/bin/python3.6
+
 import config
 import telebot
 from pyzabbix import ZabbixAPI
