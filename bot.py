@@ -25,22 +25,24 @@ def get_message(message):
 
         users = client.service.getVgroups(flt={'login': login_id})
         if len(users[1]) > 0:
-            port = client.service.getPorts(flt={'vgid': users[1][0]['vgid']})
-            device = client.service.getDevice(id=port[1][0]['deviceid'])
-            devicename = device[1][0]['device']['devicename']
-            zb = ZabbixAPI('http://zabbix.opti', user=config.zabbix_login, password=config.zabbix_password)
-            items = zb.item.get(host=devicename, output=['itemid', 'name', 'lastvalue'])
-            signal_level = 'Не найдено'
-            for item in items:
-                if str(login_id) in item['name']:
-                    if 'Signal level' in item['name']:
-                        print(item)
-                        signal_level = item['lastvalue']
-                        signal_level = round(float(signal_level), 1)
-                    answer = f'''
+            try:
+                port = client.service.getPorts(flt={'vgid': users[1][0]['vgid']})
+                device = client.service.getDevice(id=port[1][0]['deviceid'])
+                devicename = device[1][0]['device']['devicename']
+                zb = ZabbixAPI('http://zabbix.opti', user=config.zabbix_login, password=config.zabbix_password)
+                items = zb.item.get(host=devicename, output=['itemid', 'name', 'lastvalue'])
+                signal_level = 'Не найдено'
+                for item in items:
+                    if str(login_id) in item['name']:
+                        if 'Signal level' in item['name']:
+                            signal_level = item['lastvalue']
+                            signal_level = round(float(signal_level), 1)
+                        answer = f'''
 Логин: {login_id} 
 Уровень сигнала: {signal_level}
 '''
+            except IndexError:
+                answer = "Данные отсутствуют"
         else:
             answer = "Пользователь не найден"
         bot.send_message(message.chat.id, answer)
