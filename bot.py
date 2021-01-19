@@ -28,13 +28,25 @@ def user_info(message):
             zb = ZabbixAPI('http://zabbix.opti', user=config.zabbix_login, password=config.zabbix_password)
             items = zb.item.get(host=devicename, output=['itemid', 'name', 'lastvalue'])
             signal_level = 'Данные отсутствуют'
+            port_status = 'Данные отсутствуют'
+            for item in items:
+                if str(login_id) in item['name']:
+                    if 'status' in item['name']:
+                        if int(item['lastvalue']) == 1:
+                            port_status = 'Up'
+                        else:
+                            port_status = 'Down'
             for item in items:
                 if str(login_id) in item['name']:
                     if 'Signal level' in item['name']:
-                        signal_level = item['lastvalue']
-                        signal_level = round(float(signal_level), 1)
-                    answer = f'''
-Логин: {login_id} 
+                        if port_status == 'Down':
+                            signal_level = 'Данные отсутствуют'
+                        elif port_status == 'Up':
+                            signal_level = item['lastvalue']
+                            signal_level = round(float(signal_level), 1)
+            answer = f'''
+Логин: {login_id}
+Статус порта: {port_status}
 Уровень сигнала: {signal_level}
 '''
         except IndexError:
