@@ -89,11 +89,15 @@ def get_message(message):
 
 
 def config_onu(message):
-    if message.text == '/stop':
+    try:
+        if message.text == '/stop':
+            bot.register_next_step_handler(message, get_message)
+            bot.send_message(message.chat.id, 'Замена клиентского ONU остановлена')
+        else:
+            bot.send_message(message.chat.id, reconfig_onu(message.text))
+    except IndexError:
         bot.register_next_step_handler(message, get_message)
-        bot.send_message(message.chat.id, 'Замена клиентского ONU остановлена')
-    else:
-        bot.send_message(message.chat.id, reconfig_onu(message.text))
+        bot.send_message(message.chat.id, 'Пользователь не найден, настройка прекращена')
 
 
 
