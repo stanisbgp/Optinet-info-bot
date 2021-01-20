@@ -4,6 +4,7 @@ import config
 import telebot
 from pyzabbix import ZabbixAPI
 from suds.client import Client
+from reconfig_onu import reconfig_onu
 
 
 bot = telebot.TeleBot(config.token)
@@ -32,6 +33,7 @@ def user_info(message):
             for item in items:
                 if str(login_id) in item['name']:
                     if 'status' in item['name']:
+                        print()
                         if int(item['lastvalue']) == 1:
                             port_status = 'Up'
                         else:
@@ -71,6 +73,31 @@ def get_message(message):
         user_info(message)
     elif message.text.startswith('GON'):
         user_info(message)
+    elif message.text == '/help':
+        help_answer = '''
+- /reconfig - замена клиентского ONU
+- Чтобы посмотреть уровень затуханий введите логин абонента
+        '''
+        bot.send_message(message.chat.id, help_answer)
+    elif message.text == '/reconfig':
+        reconfig_message = '''
+- Для продолжения настройки введите логин абонента и дождитесь завершения настройки;
+- Для прекращения настройки введите /stop.
+        '''
+        bot.send_message(message.chat.id, reconfig_message)
+        bot.register_next_step_handler(message, config_onu)
+
+
+def config_onu(message):
+    if message.text == '/stop':
+        bot.register_next_step_handler(message, get_message)
+        bot.send_message(message.chat.id, 'Замена клиентского ONU остановлена')
+    else:
+        bot.send_message(message.chat.id, reconfig_onu(message.text))
+
+
+
+
 
 if __name__ == '__main__':
     bot.infinity_polling()
