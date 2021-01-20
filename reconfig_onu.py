@@ -6,7 +6,6 @@ from pyzabbix import ZabbixAPI
 from suds.client import Client
 
 
-
 def reconfig_onu(login_id):
     endpoint = config.wsdl_url
     service_url = config.service_url
