@@ -57,6 +57,7 @@ def user_info(message):
         answer = "Пользователь не найден"
     bot.send_message(message.chat.id, answer)
 
+
 @bot.message_handler(func=lambda message: message.chat.id not in white_list)
 def access_denied(message):
     print(message)
@@ -98,9 +99,6 @@ def config_onu(message):
     except IndexError:
         bot.register_next_step_handler(message, get_message)
         bot.send_message(message.chat.id, 'Пользователь не найден, настройка прекращена')
-
-
-
 
 
 if __name__ == '__main__':
