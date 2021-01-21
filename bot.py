@@ -82,7 +82,9 @@ def get_message(message):
         bot.send_message(message.chat.id, help_answer)
     elif message.text == '/reconfig':
         reconfig_message = '''
+- Отключите старое устройство;
 - Для продолжения настройки введите логин абонента и дождитесь завершения настройки;
+- Подключите новое устройство;
 - Для прекращения настройки введите /stop.
         '''
         bot.send_message(message.chat.id, reconfig_message)

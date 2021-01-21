@@ -62,5 +62,5 @@ def reconfig_onu(login_id):
     tn.write(b'write all\n')
     tn.write(b'exit\n')
     tn.write(b'exit\n')
-    answer_end_config = 'Настройка завершена'
+    answer_end_config = 'Настройка завершена, подключите onu'
     return answer_end_config
