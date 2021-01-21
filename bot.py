@@ -4,7 +4,7 @@ import config
 import telebot
 from pyzabbix import ZabbixAPI
 from suds.client import Client
-from reconfig_onu import reconfig_onu
+#from reconfig_onu import reconfig_onu_port, reconfig_epon_port
 
 
 bot = telebot.TeleBot(config.token)
@@ -76,31 +76,37 @@ def get_message(message):
         user_info(message)
     elif message.text == '/help':
         help_answer = '''
-- /reconfig - замена клиентского ONU
 - Чтобы посмотреть уровень затуханий введите логин абонента
         '''
         bot.send_message(message.chat.id, help_answer)
-    elif message.text == '/reconfig':
-        reconfig_message = '''
-- Отключите старое устройство;
-- Для продолжения настройки введите логин абонента и дождитесь завершения настройки;
-- Подключите новое устройство;
-- Для прекращения настройки введите /stop.
-        '''
-        bot.send_message(message.chat.id, reconfig_message)
-        bot.register_next_step_handler(message, config_onu)
+#     elif message.text == '/reconfig':
+#         reconfig_message = '''
+# - Отключите старое устройство;
+# - Для продолжения настройки введите логин абонента и дождитесь завершения настройки;
+# - Подключите новое устройство;
+# - Для прекращения настройки введите /stop.
+#         '''
+#         bot.send_message(message.chat.id, reconfig_message)
+#         bot.register_next_step_handler(message, config_epon)
 
 
-def config_onu(message):
-    try:
-        if message.text == '/stop':
-            bot.register_next_step_handler(message, get_message)
-            bot.send_message(message.chat.id, 'Замена клиентского ONU остановлена')
-        else:
-            bot.send_message(message.chat.id, reconfig_onu(message.text))
-    except IndexError:
-        bot.register_next_step_handler(message, get_message)
-        bot.send_message(message.chat.id, 'Пользователь не найден, настройка прекращена')
+# def config_epon(message):
+#     try:
+#         if message.text == '/stop':
+#             bot.register_next_step_handler(message, get_message)
+#             bot.send_message(message.chat.id, 'Замена клиентского ONU остановлена')
+#         else:
+#             bot.send_message(message.chat.id, 'Подключите новый onu')
+#             reconfig_epon_port(message.text)
+#
+#     except IndexError:
+#         bot.register_next_step_handler(message, get_message)
+#         bot.send_message(message.chat.id, 'Пользователь не найден, настройка прекращена')
+#
+#
+# def config_onu(message):
+#     bot.send_message(message.chat.id, reconfig_onu_port())
+
 
 
 if __name__ == '__main__':
