@@ -6,6 +6,7 @@ from pyzabbix import ZabbixAPI
 from suds.client import Client
 from reconfig_onu import reconfig_onu_port, reconfig_epon_port
 import time
+from userinfo import userinfo
 
 
 bot = telebot.TeleBot(config.token)
@@ -18,7 +19,7 @@ login_id = ''
 vlan = ''
 
 
-def user_info(message):
+def user_signal_info(message):
     answer = "Данные отсутствуют"
     login_id = message.text
     endpoint = config.wsdl_url
@@ -74,17 +75,18 @@ def access_denied(message):
 @bot.message_handler(content_types=['text'])
 def get_message(message):
     if message.text.startswith('100'):
-        user_info(message)
+        user_signal_info(message)
     elif message.text.startswith('200'):
-        user_info(message)
+        user_signal_info(message)
     elif "ON" in message.text:
-        user_info(message)
+        user_signal_info(message)
     elif message.text.startswith('GON'):
-        user_info(message)
+        user_signal_info(message)
     elif message.text == '/help':
         help_answer = '''
 - Чтобы посмотреть уровень затуханий введите логин абонента
 - Для замены onu устройства наберите /reconfig
+- Информация о пользователе /userinfo
         '''
         bot.send_message(message.chat.id, help_answer)
     elif message.text == '/reconfig':
@@ -97,6 +99,10 @@ def get_message(message):
         '''
         bot.send_message(message.chat.id, reconfig_message)
         bot.register_next_step_handler(message, config_epon)
+    elif message.text == '/userinfo':
+        bot.send_message(message.chat.id, 'Введите логин абонента')
+        bot.register_next_step_handler(message, get_userinfo)
+
 
 
 def config_epon(message):
@@ -113,6 +119,13 @@ def config_epon(message):
     except IndexError:
         bot.register_next_step_handler(message, get_message)
         bot.send_message(message.chat.id, 'Пользователь не найден, настройка прекращена')
+
+
+def get_userinfo(message):
+    try:
+        bot.send_message(message.chat.id, userinfo(message))
+    except IndexError:
+        bot.send_message(message.chat.id, 'Пользователь не найден')
 
 
 if __name__ == '__main__':
